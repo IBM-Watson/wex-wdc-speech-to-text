@@ -1,0 +1,84 @@
+<function name="vse-converter-speech-to-text-bluemix" type="converters" type-in="unknown" type-out="application/vxml-unnormalized" products="all" >
+  <prototype>
+    <description>The Watson Speech to Text Bluemix service can be used anywhere there is a need to bridge the gap between the spoken word and written form. The easy-to-use service uses machine intelligence to combine information about grammar and language structure with knowledge of the composition of the audio signal to generate an accurate transcription.<p />
+
+    See the Speech to Text documentation for detailed information (http://www.ibm.com/smarterplanet/us/en/ibmwatson/developercloud/speech-to-text.html).<p />
+    </description>
+    <label>Speech to Text Bluemix Converter</label>
+    <declare type="url" name="speech-to-text-url" initial-value="http://MYAPPLICATION.mybluemix.net/api/recognize">
+      <label>Bluemix application REST endpoint</label>
+      <description>Enter the REST endpoint provided by your Bluemix application.
+      </description>
+    </declare>
+    <declare type="positive-int" name="default-timeout" initial-value="90" units="seconds">
+      <label>Request timeout</label>
+      <description>This sets the amount of time, in seconds, to wait for a response from the API call.</description>
+    </declare>
+    <declare type="string" name="proxy-host-port">
+      <label>Proxy server (host:port)</label>
+      <description>This sets a proxy server through which all Bluemix application calls will be directed.  It is recommended that a local caching proxy be used to improve performance and reduce the total number of Bluemix application calls.  Specify "" to override a system proxy with no proxy.</description>
+    </declare>
+    <declare type="user-password" name="proxy-user-pass">
+      <label>Proxy username and password</label>
+      <description>Provide the credentials used to authenticate to the proxy server configured above.</description>
+    </declare>
+    <declare type="flag" name="debug">
+      <label>Enable debug contents</label>
+      <description>If debug contents are enabled, then if the Speech to Text service returned an error, a content containing the error message will be added to the document.  This is useful for debugging, but it may not be as valuable in your final crawl.</description>
+    </declare>
+  </prototype>
+  <declare name="platform" type="string" />
+  <set-var name="platform">
+    <value-of select="viv:system-information()/platform" />
+  </set-var>
+  <converter type-in="unknown" type-out="text/speech-to-text-transcript" timing-name="Speech to Text - 1. Send flac files to service">
+    <converter-test what="url" how="wc-set">*.flac</converter-test>
+    <converter-execute>curl -k --max-time <value-of-var name="default-timeout" /> <if-var name="proxy-host-port">--proxy <value-of-var name="proxy-host-port" /> </if-var><if-var name="proxy-user-pass">--proxy-user <value-of-var name="proxy-user-pass" /> </if-var> --data-binary @%source_file -o %target_file "<value-of-var name="speech-to-text-url" />"</converter-execute>
+  </converter>
+  <converter type-in="text/speech-to-text-transcript" type-out="application/vxml-unnormalized" timing-name="Speech to Text - 2. Transcript to VXML" >
+    <parser type="xsl">
+    <call-function name="xsl-parser-variable">
+      <with name="name">debug</with>
+      <with name="value">
+        <if-var name="debug">
+          <value-of-var name="debug" />
+        </if-var>
+      </with>
+    </call-function><![CDATA[
+<xsl:template match="/">
+<xsl:variable name="r" select="/" />
+  <document>
+  <!-- check the results from the API and add appropriate contents -->
+  <xsl:choose>
+    <xsl:when test="$r/results/status = 'OK'" >
+      <xsl:for-each select="$r/results/transcript" >
+        <!-- We add one content per transcript -->
+        <content name="speech-to-text-transcript" >
+          <xsl:value-of select="./text()" />
+        </content>
+      </xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="show-debug-information">
+        <xsl:with-param name="result" select="$r" />
+        <xsl:with-param name="is-debug" select="$debug" />
+        <xsl:with-param name="label">speech-to-text</xsl:with-param>
+      </xsl:call-template>
+    </xsl:otherwise>
+  </xsl:choose>
+  </document>
+</xsl:template>
+
+<xsl:template name="show-debug-information">
+  <xsl:param name="result" />
+  <xsl:param name="is-debug" />
+  <xsl:param name="label" />
+  <xsl:if test="$is-debug" >
+    <content name="debug-{$label}-service-error" action="none" type="text">
+      <xsl:value-of select="$result/results/statusInfo" />
+    </content>
+  </xsl:if>
+</xsl:template>
+]]></parser>
+  </converter>
+</function>

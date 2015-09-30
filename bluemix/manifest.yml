@@ -1,0 +1,11 @@
+---
+services:
+- wex-stt-serv
+applications:
+- name: wex-stt
+  disk_quota: 512M
+  host: wex-stt
+  path: target/wex-wdc-SpeechToText-sample.war
+  domain: mybluemix.net
+  instances: 1
+  memory: 512M
