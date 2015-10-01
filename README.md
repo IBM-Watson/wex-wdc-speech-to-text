@@ -22,7 +22,7 @@ Please see the [Introduction](https://github.com/Watson-Explorer/wex-wdc-integra
 This tutorial will walk through the creation and deployment of two components.
 
 1. A basic Bluemix application exposing the Watson Speech to Text service as a web service.
-2. A Watson Explorer Engine Speech to Text converter.  This converter sends an audio file to the Bluemix application, which in turn sends the audio file to the Speech to Text service for speech recognition.  The converter takes the audio transcription response text and converts it to VXML.
+2. A Watson Explorer Engine Speech to Text converter.  This converter sends an audio file to the Bluemix application, which in turn sends the audio file to the Speech to Text service for speech recognition and transcription.  The converter takes the audio transcription response text and converts it to VXML.
 
 
 ## Step-by-Step Tutorial
@@ -33,11 +33,11 @@ This section provides details on the steps required to create a Speech to Text s
 
 The Bluemix documentation can be found [here](https://bluemix.net/docs/).
 
-Navigate to the Bluemix dashboard and create a new application with Liberty for Java.  For the sake of this example, we have chosen to name the application `wex-stt`.
+Navigate to the Bluemix dashboard and create a new application with Liberty for Java.  For this example, we have chosen to name the application `wex-stt`.
 
-Navigate to the Bluemix dashboard and create a new Speech to Text service.  Supply the name of the application you just created to which the service will bind.  For the sake of the example, we have chosen to name the service `wex-stt-serv`.
+Navigate to the Bluemix dashboard and create a new Speech to Text service.  Supply the name of the application you just created to which the service will bind.  For this example, we have chosen to name the service `wex-stt-serv`.
 
-Note that your Bluemix application and Speech to Text service may alternatively be provisioned from the commandline via the `cf` tool.
+Note that your Bluemix application and Speech to Text service may alternatively be provisioned from the command-line via the `cf` tool.
 
 
 ### Configuring and Deploying the Watson Speech to Text proxy application in Bluemix
@@ -75,9 +75,9 @@ Once the application has finished restarting, you can now view the route that wa
 
 ### Installing and Configuring the Speech to Text Converter
 
-The Speech to Text converter provided in this example integration is designed to send crawled data whose URL ends with the string `.flac` to the Speech to Text service for speech recognition analysis.  Flac is one of many different audio file formats.  If you expect to encounter other audio file formats during your crawl, it is recommended that you leverage software like [SoX](http://sox.sourceforge.net/) or [FFmpeg](https://ffmpeg.org/) to convert the audio data to flac format.  The [Watson Developer Cloud AlchemyVision integration](https://github.com/IBM-Watson/wex-wdc-alchemyapi-alchemyvision) provides an example of very similar processing - image files are conveted to a single file format (PNG) by external software (ImageMagick) before being sent to the Watson AlchemyAPI service.  Be sure to allow your audio file types in **both** the **Binary file extensions (filter)** crawl condition and converter.
+The Speech to Text converter provided in this example integration is designed to send crawled data whose URL ends with the string `.flac` to the Speech to Text service for speech recognition analysis.  Flac is one of many different audio file formats.  If you expect to encounter other audio file formats during your crawl, it is recommended that you leverage software like [SoX](http://sox.sourceforge.net/) or [FFmpeg](https://ffmpeg.org/) to convert the audio data to flac format.  The [Watson Developer Cloud AlchemyVision integration](https://github.com/IBM-Watson/wex-wdc-alchemyapi-alchemyvision) provides an example of very similar processing - image files are converted to a single file format (PNG) by external software (ImageMagick) before being sent to the Watson AlchemyAPI service.  Be sure to allow your audio file types in **both** the **Binary file extensions (filter)** crawl condition and converter.
 
-1. In Engine, create a new XML Element by ensuring you are on the **Configuration** tab of the admin tool and then clicking the "+" across from "XML" in the left menu.  The element and name can have any value.
+1. In Engine, create a new XML Element by ensuring you are on the **Configuration** tab of the admin tool and then clicking the "+" next to "XML" in the left menu.  The element and name can have any value.
 2. Copy the entire contents of [function.vse-converter-speech-to-text-bluemix.xml](/engine/function.vse-converter-speech-to-text-bluemix.xml).
 3. Paste the copied XML into the Engine XML text box, replacing all text that was previously there.
 4. Save the converter configuration by clicking **OK**.
