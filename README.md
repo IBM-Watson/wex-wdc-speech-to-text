@@ -10,10 +10,9 @@ The goal of this tutorial is to demonstrate how to get started with an integrati
 
 
 ## Prerequisites
-Please see the [Introduction](https://github.com/Watson-Explorer/wex-wdc-integration-samples) for an overview of the integration architecture, and the tools and libraries that need to be installed to create Java-based applications in Bluemix.
+Please see the [Introduction](https://github.com/IBM-Watson/wex-appbuilder-samples/blob/master/intro-to-bluemix-for-app-builder.md) for an overview of the integration architecture, and the tools and libraries that need to be installed to create Java-based applications in Bluemix.
 
 - An [IBM Bluemix account](https://bluemix.net/)
-- [Cloud Foundry](https://github.com/cloudfoundry/cli/releases)
 - [Watson Explorer](http://www.ibm.com/smarterplanet/us/en/ibmwatson/explorer.html) - Installed, configured, and running
 - Some basic familiarity with Watson Explorer Engine.  Completion of the Watson Explorer [Engine meta-data tutorial](http://www-01.ibm.com/support/knowledgecenter/SS8NLW_11.0.0/com.ibm.swg.im.infosphere.dataexpl.engine.tut.md.doc/c_vse-metadata-tutorial.html) should be sufficient, but is not strictly necessary.
 

@@ -38,8 +38,6 @@ public class SpeechToText {
     *  as well, since we are dealing with binary data.
     */
         HttpURLConnection conn = null;
-        String serviceURL = "";
-
         try {
             if (incomingBinaryPOSTData.length == 0) {
                 return XML_DEC + "<results>" + STATUS_OK + "<transcript />" + "</results>";
@@ -51,14 +49,7 @@ public class SpeechToText {
                                     .getJsonObject(0)
                                     .getJsonObject("credentials");
 
-
-
-            serviceURL = credentials.getString("url");
-
-            if ("".equals(serviceURL)) {
-                serviceURL = ORIGINAL_SERVICE_URL;
-            }
-
+            String serviceURL = credentials.getString("url", ORIGINAL_SERVICE_URL);
 
             // set up our http request
             conn = setupHttpConnection(incomingBinaryPOSTData, serviceURL, credentials);
@@ -69,11 +60,17 @@ public class SpeechToText {
             sendRequest(incomingBinaryPOSTData, conn);
 
             // Read the response from the service
-            String lines = readResponse(conn);
+            JsonObject response = readJsonObject(new StringReader(readResponse(conn)));
 
             // Parse the transcript string out of the Speech To Text service's JSON response
-            String transcript = readTranscripts(readJsonObject(new StringReader(lines)));
+            String transcript;
+            try {
+                transcript = readTranscripts(response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return failXML(e, "Unexpected response from service caused ");
 
+            }
             // Return the response from the service
             return successXML(transcript);
         } catch (Exception e) {
@@ -112,7 +109,7 @@ public class SpeechToText {
         }
 
         // Prepare the HTTP connection to the service
-        HttpURLConnection conn = (HttpURLConnection) new URL(serviceURL + API_PATH + "?" + queryString).openConnection();
+        HttpURLConnection conn = openConnectionWithURL(serviceURL, queryString);
 
         // Set up our header with all the information we need to make the api request
         conn.setDoInput(true);
@@ -129,6 +126,10 @@ public class SpeechToText {
         return conn;
     }
 
+    private HttpURLConnection openConnectionWithURL(String serviceURL, String queryString) throws IOException {
+        return (HttpURLConnection) new URL(serviceURL + API_PATH + "?" + queryString).openConnection();
+    }
+
 
     private void sendRequest(byte[] incomingBinaryPOSTData, HttpURLConnection conn) throws IOException {
         OutputStream output = conn.getOutputStream();
@@ -140,14 +141,9 @@ public class SpeechToText {
 
     // Collect the transcripts from all the results in our response body
     private String readTranscripts(JsonObject jsonResponse) {
-        JsonArray resultsArray = jsonResponse.getJsonArray("results");
+            JsonArray resultsArray = jsonResponse.getJsonArray("results");
 
-        try {
             return resultsArray.stream().map(jv -> getTranscript((JsonObject) jv)).collect(Collectors.joining());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return failXML(e, "Unexpected response from service caused ");
-        }
     }
 
 
