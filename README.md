@@ -10,7 +10,7 @@ The goal of this tutorial is to demonstrate how to get started with an integrati
 
 
 ## Prerequisites
-Please see the [Introduction](https://github.com/Watson-Explorer/wex-wdc-integration-samples) for an overview of the integration architecture, and the tools and libraries that need to be installed to create Java-based applications in Bluemix.
+Please see the [Introduction](https://github.com/IBM-Watson/wex-appbuilder-samples/blob/master/intro-to-bluemix-for-app-builder.md) for an overview of the integration architecture, and the tools and libraries that need to be installed to create Java-based applications in Bluemix.
 
 - An [IBM Bluemix account](https://bluemix.net/)
 - [Watson Explorer](http://www.ibm.com/smarterplanet/us/en/ibmwatson/explorer.html) - Installed, configured, and running
